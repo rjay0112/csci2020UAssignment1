@@ -62,6 +62,41 @@ public class SpamTester{
     File spamDir=new File("data/train/spam");
     hamTrain.processFile(hamDir);
     spamTrain.processFile(spamDir);
+    //create spam word probability map
+    Map<String,Float> spamProb=new TreeMap<>();
+    Set<String> spamKeys = spamTrain.probabilities.keySet();
+    Iterator<String> spamKeyIterator = spamKeys.iterator();
+    //runs through each word detected in spam files
+    while (spamKeyIterator.hasNext()) {
+      String key = spamKeyIterator.next();
+      float occur = spamTrain.probabilities.get(key);
+      //if spam word also appears in ham files
+      if(hamTrain.probabilities.containsKey(key)){
+        float probAppearSpam=(occur/spamTrain.getFileCount());
+        float probAppearHam=(hamTrain.probabilities.get(key)/hamTrain.getFileCount());
+        float probSpamWord=probAppearSpam/(probAppearHam+probAppearSpam);
+        System.out.println("Word: "+ key+ " chance "+probSpamWord);
+        spamProb.put(key,probSpamWord);
+      }
+      //if spam word only appears in spam files
+      else{
+        float probSpamWord=1f;
+        System.out.println("Word: "+ key+ " chance "+probSpamWord);
+        spamProb.put(key,probSpamWord);
+      }
+    }
+
+    Set<String> hamKeys = hamTrain.probabilities.keySet();
+    Iterator<String> hamKeyIterator = hamKeys.iterator();
+    //adds remaining probabilities for words only appearing in ham
+    while(hamKeyIterator.hasNext()){
+      String key=hamKeyIterator.next();
+      if(!spamTrain.probabilities.containsKey(key)){
+        float probSpamWord=0f;
+        System.out.println("Word: "+ key+ " chance "+probSpamWord);
+        spamProb.put(key,probSpamWord);
+      }
+    }
 
   }
 }
