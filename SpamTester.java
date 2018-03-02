@@ -10,6 +10,8 @@ public class SpamTester{
     probabilities=new TreeMap<>();
   }
   public int getFileCount(){return this.fileCount;}
+  public Map<String, Integer> getFileWords(){return this.fileWords;}
+
 
   public void processFile(File file) throws IOException{
     if (file.isDirectory()){
@@ -23,7 +25,7 @@ public class SpamTester{
       fileCount++;
       Scanner scanner=new Scanner(file);
       fileWords=new TreeMap<>();
-      scanner.useDelimiter("'|\\s|\"|,|:|!|\\?|\\.|-|\'");
+      scanner.useDelimiter("'|\\s|,|:|!|\\?|\\.|-|\'");
       while(scanner.hasNext()){
         String word=scanner.next().toLowerCase();
         if (isWord(word)){
@@ -80,7 +82,7 @@ public class SpamTester{
       }
       //if spam word only appears in spam files
       else{
-        float probSpamWord=1f;
+        float probSpamWord=0.999f;
         System.out.println("Word: "+ key+ " chance "+probSpamWord);
         spamProb.put(key,probSpamWord);
       }
@@ -92,11 +94,32 @@ public class SpamTester{
     while(hamKeyIterator.hasNext()){
       String key=hamKeyIterator.next();
       if(!spamTrain.probabilities.containsKey(key)){
-        float probSpamWord=0f;
+        float probSpamWord=0.001f;
         System.out.println("Word: "+ key+ " chance "+probSpamWord);
         spamProb.put(key,probSpamWord);
       }
     }
+
+    //running through testing files
+    SpamTester eachFile=new SpamTester();
+    File testDir=new File("data/test/spam");
+    File[] contents=testDir.listFiles();
+    for (File current: contents){
+      float fileSpamChance=0f;
+      int count=0;
+      eachFile.processFile(current);
+      Set<String> fileWordKeys=eachFile.getFileWords().keySet();
+      Iterator<String> fileWordIterator=fileWordKeys.iterator();
+      while(fileWordIterator.hasNext()){
+        String wordKey=fileWordIterator.next();
+        if (spamProb.containsKey(wordKey)){
+          fileSpamChance+=Math.log(1-spamProb.get(wordKey))-Math.log(spamProb.get(wordKey));
+          count++;
+        }
+      }
+      System.out.println(count+" + "+1/(1+Math.pow(Math.E,fileSpamChance)));
+    }
+
 
   }
 }
