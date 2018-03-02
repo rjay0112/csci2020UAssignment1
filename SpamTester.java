@@ -11,8 +11,8 @@ public class SpamTester{
   }
   public int getFileCount(){return this.fileCount;}
 
-  public void processFiles(File file) throws IOException{
-    if (file.isDirectoy()){
+  public void processFile(File file) throws IOException{
+    if (file.isDirectory()){
       File[] contents = file.listFiles();
       for (File current: contents){
         processFile(current);
@@ -23,11 +23,11 @@ public class SpamTester{
       fileCount++;
       Scanner scanner=new Scanner(file);
       fileWords=new TreeMap<>();
-      scanner.useDelimeter("'|\\s|\"|,|:|!|\\?|\\.|-|\'");
+      scanner.useDelimiter("'|\\s|\"|,|:|!|\\?|\\.|-|\'");
       while(scanner.hasNext()){
         String word=scanner.next().toLowerCase();
         if (isWord(word)){
-          //wordAdd(word);
+          wordAdd(word);
         }
       }
     }
@@ -50,12 +50,18 @@ public class SpamTester{
         float oldCount = probabilities.get(word);
         probabilities.put(word, oldCount+1);
       } else {
-        probabilities.put(word, 1);
+        probabilities.put(word, 1f);
       }
     }
   }
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws IOException{
+    SpamTester hamTrain=new SpamTester();
+    SpamTester spamTrain=new SpamTester();
+    File hamDir=new File("data/train/ham");//check with ham2
+    File spamDir=new File("data/train/spam");
+    hamTrain.processFile(hamDir);
+    spamTrain.processFile(spamDir);
 
   }
 }
