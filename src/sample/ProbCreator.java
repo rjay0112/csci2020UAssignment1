@@ -72,6 +72,8 @@ public class ProbCreator {
     }
 
     public void calcProb(SpamTester spam, SpamTester ham){
+        //added in min occurance of word to allow for more occuring words to calculate spam chance
+        int minOcc=10;
         wordProb=new TreeMap<>();
         Set<String> spamKeys=spam.getProb().keySet();
         Iterator<String> spamKeyIter=spamKeys.iterator();
@@ -79,14 +81,16 @@ public class ProbCreator {
             //System.out.println("WORK");
             String key=spamKeyIter.next();
             double occur=spam.getProb().get(key);
-            if(ham.getProb().containsKey(key)){
+            if(ham.getProb().containsKey(key)&&ham.getProb().get(key)+spam.getProb().get(key)>2*minOcc){
                 double probAppearSpam=(occur/spam.getFileCount());
                 double probAppearHam=(ham.getProb().get(key)/ham.getFileCount());
                 double probSpamWord=probAppearSpam/(probAppearHam+probAppearSpam);
                 wordProb.put(key,probSpamWord);
             }
             else{
-                wordProb.put(key,0.999999);
+                if(spam.getProb().get(key)>minOcc){
+                    wordProb.put(key,0.999999);
+                }
             }
 
         }
@@ -95,7 +99,7 @@ public class ProbCreator {
         Iterator<String> hamKeyIter=hamKeys.iterator();
         while(hamKeyIter.hasNext()){
             String key=hamKeyIter.next();
-            if(!spam.getProb().containsKey(key)){
+            if(!spam.getProb().containsKey(key)&&ham.getProb().get(key)>minOcc){
                 wordProb.put(key,0.000001);
             }
         }

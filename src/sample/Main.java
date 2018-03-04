@@ -29,7 +29,7 @@ public class Main extends Application {
         BorderPane layout=new BorderPane();
 
         TableColumn<TestFile, Integer> idCol = new TableColumn<>("File");
-        idCol.setPrefWidth(300);
+        idCol.setPrefWidth(400);
         idCol.setCellValueFactory(new PropertyValueFactory<>("filename"));
 
         TableColumn<TestFile, String> fCol = new TableColumn<>("Actual Class");
@@ -37,7 +37,7 @@ public class Main extends Application {
         fCol.setCellValueFactory(new PropertyValueFactory<>("actualClass"));
 
         TableColumn<TestFile, String> lCol = new TableColumn<>("Spam Probability");
-        lCol.setPrefWidth(200);
+        lCol.setPrefWidth(300);
         lCol.setCellValueFactory(new PropertyValueFactory<>("spamProbRounded"));
 
         students = new TableView<>();
@@ -54,7 +54,7 @@ public class Main extends Application {
         GridPane gp= new GridPane();
         gp.setPadding(new Insets(5,5,5,5));
         gp.setHgap(5);
-        gp.setVgap(5);
+        gp.setVgap(10);
         students.setItems(ProbCreator.getAllFileProb(new File(mainDirectory.getPath()+"/test")));
 
         Label accLabel=new Label("Accuracy: ");
@@ -71,7 +71,7 @@ public class Main extends Application {
 
         layout.setCenter(students);
         layout.setBottom(gp);
-        primaryStage.setScene(new Scene(layout, 600, 700));
+        primaryStage.setScene(new Scene(layout, 800, 600));
         primaryStage.show();
     }
 

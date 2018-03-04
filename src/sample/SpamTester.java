@@ -2,12 +2,10 @@ package sample;
 
 import java.io.*;
 import java.util.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+
 
 
 public class SpamTester{
-    private static ObservableList<TestFile> allFiles;
     private Map<String, Double> probabilities;
     private Map<String,Integer> fileWords;
     private int fileCount;
