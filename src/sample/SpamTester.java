@@ -1,3 +1,4 @@
+//Ryan Jay
 package sample;
 
 import java.io.*;
@@ -20,6 +21,7 @@ public class SpamTester{
     public void processFile(File file) throws IOException{
 
         if (file.isDirectory()){
+            //process all files in directory recursively
             File[] contents = file.listFiles();
             for (File current: contents){
                 processFile(current);
